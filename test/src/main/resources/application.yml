@@ -25,9 +25,10 @@ spring:
         show_sql: true
         hbm2ddl:
           auto: create
+mybatis:
+  type-aliases-package: com.ssg.**.domain.**
+  config-location:  classpath:mybatis-config.xml
+  mapper-locations: classpath:mappers/**/*.xml
 logging:
   level:
-    org:
-      springframework:
-        jdbc:
-          core: TRACE
+    org.hibernate.type: trace

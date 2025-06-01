@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssg.test.api.order.mapper.OrderMapper">
+
+    <!-- 재고 보유 여부 조회 -->
+    <select id="getStockYn" resultType="String">
+        SELECT
+            DECODE(COUNT(1), 0, 'Y', 'N')
+        FROM
+            GOODS_DTL
+        WHERE
+            GOODS_ID = #{goodsId}
+    </select>
+</mapper>
