@@ -4,12 +4,27 @@
 <mapper namespace="com.ssg.test.api.order.mapper.OrderMapper">
 
     <!-- 재고 보유 여부 조회 -->
-    <select id="getStockYn" resultType="String">
+    <select id="getGoodsInfo" resultType="com.ssg.test.api.order.domain.GoodsInfoDTO">
         SELECT
-            DECODE(COUNT(1), 0, 'Y', 'N')
+            DECODE(COUNT(1), 0, 'N', 'Y') AS STOCK_YN
+            , SALE_PRICE
+            , DISCOUNT_PRICE
         FROM
             GOODS_DTL
         WHERE
             GOODS_ID = #{goodsId}
+    </select>
+
+
+    <select id="getOrderGoods" resultType="com.ssg.test.api.order.domain.OrderListGoodsDTO">
+        SELECT
+            GOODS_ID
+            , GOODS_NM
+            , GOODS_PRICE
+        FROM
+            ORDER_DTL
+        WHERE
+            ORDER_NUM = #{orderNum}
+
     </select>
 </mapper>

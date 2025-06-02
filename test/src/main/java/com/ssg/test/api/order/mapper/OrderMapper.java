@@ -1,5 +1,6 @@
 package com.ssg.test.api.order.mapper;
 
+import com.ssg.test.api.order.domain.GoodsInfoDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -10,5 +11,7 @@ public interface OrderMapper {
      * @param goodsId
      * @return
      */
-    String getStockYn(Long goodsId);
+    GoodsInfoDTO getGoodsInfo(Long goodsId);
+
+
 }

@@ -2,17 +2,14 @@ package com.ssg.test.api.order.controller;
 
 import com.ssg.test.api.order.domain.OrderCreateReqDTO;
 import com.ssg.test.api.order.domain.OrderCreateRespDTO;
+import com.ssg.test.api.order.domain.OrderListRespDTO;
 import com.ssg.test.api.order.service.OrderService;
 import com.ssg.test.base.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 주문 컨트롤러
@@ -30,5 +27,12 @@ public class OrderController {
     public CommonResponse<OrderCreateRespDTO> orderCreate(@Valid @RequestBody OrderCreateReqDTO orderCreateReqDTO) {
 
         return orderService.orderCreate(orderCreateReqDTO);
+    }
+
+    @GetMapping
+    @Operation(summary = "주문 목록 조회 API", description = "주문 목록을 조회한다.")
+    public CommonResponse<OrderListRespDTO> getOrderList(@RequestParam Long orderNum) {
+
+        return null;
     }
 }
