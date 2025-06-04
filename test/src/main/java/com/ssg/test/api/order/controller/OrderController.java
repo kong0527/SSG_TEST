@@ -32,8 +32,8 @@ public class OrderController {
 
     @GetMapping
     @Operation(summary = "주문 목록 조회 API", description = "주문 목록을 조회한다.")
-    public CommonResponse<OrderListRespDTO> getOrderList(@RequestParam Long orderNum) {
+    public CommonResponse<OrderListRespDTO> getOrderList(@RequestParam("orderNum") Long orderNum) {
 
-        return null;
+        return orderService.getOrderList(orderNum);
     }
 }

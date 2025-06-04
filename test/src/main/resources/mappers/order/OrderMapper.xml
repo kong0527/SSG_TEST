@@ -55,16 +55,22 @@
         )
     </insert>
 
-
+    <!-- 주문 상품 정보 조회 -->
     <select id="getOrderGoods" resultType="com.ssg.test.api.order.domain.OrderListGoodsDTO">
         SELECT
             GOODS_ID
+            , SUM(ORDER_QTY) AS ORDER_QTY
             , GOODS_NM
-            , GOODS_PRICE
+            , ORDER_STATUS
+            , (SALE_PRICE - DISCOUNT_PRICE) AS GOODS_PRICE
         FROM
             ORDER_DTL
         WHERE
             ORDER_NUM = #{orderNum}
-
+        GROUP BY
+            GOODS_ID
+            , GOODS_NM
+            , ORDER_STATUS
+            , (SALE_PRICE - DISCOUNT_PRICE)
     </select>
 </mapper>

@@ -1,4 +1,5 @@
 /*
+
 -- TODO: ddl-auto 옵션 줬는데 왜 already exists 뜨는지 확인해볼것
 -- 상품 테이블
 CREATE TABLE GOODS_DTL (
@@ -21,7 +22,7 @@ CREATE TABLE ORDER_DTL (
     , SALE_PRICE INTEGER
     , DISCOUNT_PRICE INTEGER
     , ORDER_DTTM DATETIME
-    , PRIMARY KEY (ORDER_NUM)
+    , PRIMARY KEY (ORDER_NUM, ORDER_SEQ)
 );
 
 -- 주문 시퀀스 생성
@@ -31,4 +32,5 @@ MAXVALUE 999999999
 INCREMENT BY 1
 START WITH 1
 NOCACHE;
+
 */

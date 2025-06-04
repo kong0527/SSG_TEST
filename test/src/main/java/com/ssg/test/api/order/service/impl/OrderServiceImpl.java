@@ -78,6 +78,7 @@ public class OrderServiceImpl implements OrderService {
 
         // TODO: 재고 차감 하다 오류 발생하면 주문 생성 실패
         // TODO: 재고 차감, 재고 체크 로직 생각 필요
+        // TODO: resp DATA
 
         return CommonResponse.success(ResponseSuccessEnum.SUCCESS, null);  // 정상 입니다.
     }
@@ -90,8 +91,34 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public CommonResponse<OrderListRespDTO> getOrderList(Long orderNum) {
 
+        // 주문 상품 정보 조회
+        List<OrderListGoodsDTO> orderListGoods = orderMapper.getOrderGoods(orderNum);
 
+        if (ObjectUtils.isEmpty(orderListGoods)) {
+            return CommonResponse.fail(ResponseFailEnum.ORDER_INCORRECT, null); // 주문 정보가 존재하지 않습니다.
+        }
 
-        return null;
+        // 주문 전체 금액 계산
+        Long totalPrice = 0L;
+/*        Long totalPrice = (long) orderListGoods.stream().filter(dto -> !"200".equals(dto.getOrderStatus()))
+                .mapToInt(dto -> Math.toIntExact(dto.getOrderQty() * dto.getGoodsPrice()))
+                .sum();*/
+
+        for (OrderListGoodsDTO dto : orderListGoods) {
+            // 주문 취소 상태가 아닌 것들만 계산
+            if (!"200".equals(dto.getOrderStatus())) {
+                totalPrice += dto.getOrderQty() * dto.getGoodsPrice();
+            }
+
+            // 주문 상태와 주문 상태 한글 명 매핑
+            OrderStatusEnum orderStatusEnum = Arrays.stream(OrderStatusEnum.values())
+                    .filter(stat -> stat.status().equals(dto.getOrderStatus()))
+                    .findAny().orElse(null);
+            if (!ObjectUtils.isEmpty(orderStatusEnum)) {
+                dto.setOrderStatusNm(orderStatusEnum.description());
+            }
+        }
+
+        return CommonResponse.success(ResponseSuccessEnum.SUCCESS, OrderListRespDTO.builder().orderGoodsList(orderListGoods).totalPrice(totalPrice).build());
     }
 }
