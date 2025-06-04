@@ -9,11 +9,51 @@
             DECODE(COUNT(1), 0, 'N', 'Y') AS STOCK_YN
             , SALE_PRICE
             , DISCOUNT_PRICE
+            , GOODS_NM
+            , GOODS_ID
         FROM
             GOODS_DTL
         WHERE
             GOODS_ID = #{goodsId}
+        GROUP BY
+            SALE_PRICE
+            , DISCOUNT_PRICE
+            , GOODS_NM
+            , GOODS_ID
     </select>
+
+    <!-- 주문 시퀀스 조회 -->
+    <select id="getOrderNumSeq" resultType="String">
+        SELECT
+            LPAD(NEXT VALUE FOR ORDER_NUM_SEQ, 6, '0')
+        FROM
+            DUAL
+    </select>
+
+    <!-- 주문 정보 생성 -->
+    <insert id="insertOrderInfo">
+        INSERT INTO ORDER_DTL(
+            ORDER_NUM
+            , ORDER_SEQ
+            , ORDER_QTY
+            , GOODS_ID
+            , GOODS_NM
+            , ORDER_STATUS
+            , SALE_PRICE
+            , DISCOUNT_PRICE
+            , ORDER_DTTM
+        ) VALUES (
+            #{orderNum}
+            , #{or.orderSeq}
+            , #{or.orderQty}
+            , #{or.goodsId}
+            , #{or.goodsNm}
+            , #{or.orderStatus}
+            , #{or.salePrice}
+            , #{or.discountPrice}
+            , #{or.orderDttm}
+        )
+    </insert>
 
 
     <select id="getOrderGoods" resultType="com.ssg.test.api.order.domain.OrderListGoodsDTO">

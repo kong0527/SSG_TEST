@@ -16,4 +16,10 @@ public class GoodsInfoDTO {
 
     @Schema(description = "할인 금액")
     private Long discountPrice;
+
+    @Schema(description = "상품 명")
+    private String goodsNm;
+
+    @Schema(description = "상품 ID")
+    private Long goodsId;
 }

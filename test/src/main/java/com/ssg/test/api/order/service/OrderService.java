@@ -4,7 +4,8 @@ import com.ssg.test.api.order.domain.OrderCreateReqDTO;
 import com.ssg.test.api.order.domain.OrderCreateRespDTO;
 import com.ssg.test.api.order.domain.OrderListRespDTO;
 import com.ssg.test.base.response.CommonResponse;
-import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface OrderService {
 
@@ -13,7 +14,7 @@ public interface OrderService {
      * @param orderCreateReqDTO
      * @return
      */
-    CommonResponse<OrderCreateRespDTO> orderCreate(OrderCreateReqDTO orderCreateReqDTO);
+    CommonResponse<OrderCreateRespDTO> orderCreate(List<OrderCreateReqDTO> orderCreateReqDTO);
 
     /**
      * 주문 목록 조회

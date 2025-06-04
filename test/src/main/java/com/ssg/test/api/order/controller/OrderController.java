@@ -7,9 +7,10 @@ import com.ssg.test.api.order.service.OrderService;
 import com.ssg.test.base.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 주문 컨트롤러
@@ -24,7 +25,7 @@ public class OrderController {
 
     @PostMapping
     @Operation(summary = "주문 생성 API", description = "주문을 생성한다.")
-    public CommonResponse<OrderCreateRespDTO> orderCreate(@Valid @RequestBody OrderCreateReqDTO orderCreateReqDTO) {
+    public CommonResponse<OrderCreateRespDTO> orderCreate(@RequestBody List<OrderCreateReqDTO> orderCreateReqDTO) {
 
         return orderService.orderCreate(orderCreateReqDTO);
     }
