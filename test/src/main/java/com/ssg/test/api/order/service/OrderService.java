@@ -1,8 +1,6 @@
 package com.ssg.test.api.order.service;
 
-import com.ssg.test.api.order.domain.OrderCreateReqDTO;
-import com.ssg.test.api.order.domain.OrderCreateRespDTO;
-import com.ssg.test.api.order.domain.OrderListRespDTO;
+import com.ssg.test.api.order.domain.*;
 import com.ssg.test.base.response.CommonResponse;
 
 import java.util.List;
@@ -22,4 +20,11 @@ public interface OrderService {
      * @return
      */
     CommonResponse<OrderListRespDTO> getOrderList(Long orderNum);
+
+    /**
+     * 주문 취소
+     * @param orderCancelReqDTO
+     * @return
+     */
+    CommonResponse<OrderCancelRespDTO> orderCancel(OrderCancelReqDTO orderCancelReqDTO);
 }

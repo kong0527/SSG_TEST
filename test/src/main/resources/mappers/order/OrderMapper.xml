@@ -55,6 +55,19 @@
         )
     </insert>
 
+    <!-- 결제 정보 생성 -->
+    <insert id="insertPayInfo">
+        INSERT INTO PAY_DTL(
+            ORDER_NUM
+            , PAY_SEQ
+            , PAY_AMOUNT
+        ) VALUES (
+            #{orderNum}
+            , #{paySeq}
+            , #{payAmount}
+        )
+    </insert>
+
     <!-- 주문 상품 정보 조회 -->
     <select id="getOrderGoods" resultType="com.ssg.test.api.order.domain.OrderListGoodsDTO">
         SELECT
@@ -73,4 +86,35 @@
             , ORDER_STATUS
             , (SALE_PRICE - DISCOUNT_PRICE)
     </select>
+
+    <!-- 취소시 결제 정보 업데이트 -->
+    <update id="updatePayInfo">
+        UPDATE
+            PAY_DTL
+        SET
+            PAY_AMOUNT = PAY_AMOUNT - #{cancelAmount}
+        WHERE
+            ORDER_NUM = #{pay.orderNum}
+            AND PAY_SEQ = #{pay.paySeq}
+    </update>
+
+    <!-- 결제 총 금액 조회 -->
+    <select id="getRemainOrderPrice" resultType="Long">
+        SELECT
+            SUM(PAY_AMOUNT)
+        FROM
+            PAY_DTL
+        WHERE
+            ORDER_NUM = #{orderNum}
+    </select>
+
+    <!-- 재고 환원 -->
+    <update id="updateGoodsStock">
+        UPDATE
+            GOODS_DTL
+        SET
+            STOCK_QTY = STOCK_QTY + #{qty}
+        WHERE
+            GOODS_ID = #{goodsId}
+    </update>
 </mapper>

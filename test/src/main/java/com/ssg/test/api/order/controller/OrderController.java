@@ -1,12 +1,11 @@
 package com.ssg.test.api.order.controller;
 
-import com.ssg.test.api.order.domain.OrderCreateReqDTO;
-import com.ssg.test.api.order.domain.OrderCreateRespDTO;
-import com.ssg.test.api.order.domain.OrderListRespDTO;
+import com.ssg.test.api.order.domain.*;
 import com.ssg.test.api.order.service.OrderService;
 import com.ssg.test.base.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,5 +34,12 @@ public class OrderController {
     public CommonResponse<OrderListRespDTO> getOrderList(@RequestParam("orderNum") Long orderNum) {
 
         return orderService.getOrderList(orderNum);
+    }
+
+    @PutMapping
+    @Operation(summary = "주문 취소 API", description = "주문을 취소한다.")
+    public CommonResponse<OrderCancelRespDTO> orderCancel(@Valid @RequestBody OrderCancelReqDTO orderCancelReqDTO) {
+
+        return orderService.orderCancel(orderCancelReqDTO);
     }
 }
