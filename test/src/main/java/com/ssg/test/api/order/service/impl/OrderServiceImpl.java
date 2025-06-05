@@ -34,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     public CommonResponse<OrderCreateRespDTO> orderCreate(List<OrderCreateReqDTO> orderCreateReqDTO) {
 
         List<OrderCreateDetailDTO> orderCreateList = new ArrayList<>();
+        List<OrderGoodsInfoDTO> orderGooddsList = new ArrayList<>();
         LocalDateTime sysdate = LocalDateTime.now();
         Integer orderSeq = 1;
         Long totalPrice = 0L;
@@ -66,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
                 orderCreateList.add(orderCreateDetail);
                 totalPrice += (goodsInfo.getSalePrice() - goodsInfo.getDiscountPrice());
             }
+            orderGooddsList.add(OrderGoodsInfoDTO.builder().goodsId(goodsInfo.getGoodsId()).goodsOrderPrice((goodsInfo.getSalePrice() - goodsInfo.getDiscountPrice()) * dto.getOrderQty()).build());
         }
 
         // 주문번호 채번 규칙: yyyyMMdd + 시퀀스
@@ -82,9 +84,14 @@ public class OrderServiceImpl implements OrderService {
 
         // TODO: 재고 차감 하다 오류 발생하면 주문 생성 실패
         // TODO: 재고 차감, 재고 체크 로직 생각 필요
-        // TODO: resp DATA
 
-        return CommonResponse.success(ResponseSuccessEnum.SUCCESS, null);  // 정상 입니다.
+        OrderCreateRespDTO resp = OrderCreateRespDTO.builder()
+                .orderNum(orderNum)
+                .orderGoods(orderGooddsList)
+                .orderPrice(totalPrice)
+                .build();
+
+        return CommonResponse.success(ResponseSuccessEnum.SUCCESS, resp);  // 정상 입니다.
     }
 
     /**
@@ -97,9 +104,6 @@ public class OrderServiceImpl implements OrderService {
 
         // 주문 상품 정보 조회
         List<OrderListGoodsDTO> orderListGoods = orderMapper.getOrderGoods(orderNum);
-
-        // 주문 전체 금액 계산
-        Long totalPrice = 0L;
 
         for (OrderListGoodsDTO dto : orderListGoods) {
 
