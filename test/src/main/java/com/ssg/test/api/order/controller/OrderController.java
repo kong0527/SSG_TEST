@@ -30,14 +30,14 @@ public class OrderController {
     }
 
     @GetMapping
-    @Operation(summary = "주문 목록 조회 API", description = "주문 목록을 조회한다.")
+    @Operation(summary = "주문 상품 조회 API", description = "주문 목록을 조회한다.")
     public CommonResponse<OrderListRespDTO> getOrderList(@RequestParam("orderNum") Long orderNum) {
 
         return orderService.getOrderList(orderNum);
     }
 
     @PutMapping
-    @Operation(summary = "주문 취소 API", description = "주문을 취소한다.")
+    @Operation(summary = "주문 상품 개별 취소 API", description = "주문을 취소한다.")
     public CommonResponse<OrderCancelRespDTO> orderCancel(@Valid @RequestBody OrderCancelReqDTO orderCancelReqDTO) {
 
         return orderService.orderCancel(orderCancelReqDTO);
