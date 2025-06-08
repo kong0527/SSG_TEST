@@ -137,3 +137,12 @@ ORDER_STATUS를 통해 해당 상품의 주문 상태를 확인 (주문 완료, 
 주문 번호는 yyyyMMdd + 주문 시퀀스(ORDER_NUM_SEQ) 조합으로 채번되도록 설계
 
 ORDER_NUM_SEQ: 1부터 시작, 1씩 증가
+
+
+
+✅ **테스트 코드**
+
+테스트는 JUnit5를 사용하여 진행 (ServiceImpl class 대상)
+
+각 API에 대하여 발생할 수 있는 모든 응답 경우의 수에 대해 작성 진행
+
