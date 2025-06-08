@@ -117,4 +117,16 @@
         WHERE
             GOODS_ID = #{goodsId}
     </update>
+
+    <!-- 주문 상태 업데이트 -->
+    <update id="updateOrderStatus">
+        UPDATE
+            ORDER_DTL
+        SET
+            ORDER_STATUS = #{afterOrderStatus}
+        WHERE
+            ORDER_NUM = #{orderNum}
+            AND GOODS_ID = #{goodsId}
+            AND ORDER_STATUS = #{beforOrderStatus}
+    </update>
 </mapper>

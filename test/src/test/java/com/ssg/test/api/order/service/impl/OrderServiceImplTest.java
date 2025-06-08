@@ -6,6 +6,7 @@ import com.ssg.test.base.enums.ResponseSuccessEnum;
 import com.ssg.test.base.response.CommonResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 class OrderServiceImplTest {
 
-    @InjectMocks
+    @Autowired
     private OrderServiceImpl orderService;
 
     // 주문 생성 API - 상품 정보가 없는 경우

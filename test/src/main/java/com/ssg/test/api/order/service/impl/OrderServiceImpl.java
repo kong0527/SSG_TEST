@@ -149,13 +149,16 @@ public class OrderServiceImpl implements OrderService {
         // 주문 목록 중 해당 상품 ID로 취소 가능한 목록 추출
         OrderListGoodsDTO cancelGoods = orderListGoods.stream()
                 .filter(dto -> OrderStatusEnum.ORDER_COMPLETE.status().equals(dto.getOrderStatus()) && Objects.equals(dto.getGoodsId(), orderCancelReqDTO.getGoodsId()))
-                .toList().getFirst();
+                .findFirst().orElse(null);
 
         if (ObjectUtils.isEmpty(cancelGoods)) {
             return CommonResponse.fail(ResponseFailEnum.ORDER_ALREADY_CANCEL, null); // 이미 취소된 상품입니다.
         }
 
         Long cancelAmount = cancelGoods.getOrderQty() * cancelGoods.getGoodsPrice();
+
+        // 주문 상태 업데이트
+        orderMapper.updateOrderStatus(orderNum, orderCancelReqDTO.getGoodsId(), OrderStatusEnum.ORDER_COMPLETE.status(), OrderStatusEnum.ORDER_CANCEL.status());
 
         // 결제 테이블 업데이트
         orderMapper.updatePayInfo(PayDtlDTO.builder().orderNum(orderNum).paySeq(1).build(), cancelAmount);

@@ -61,4 +61,11 @@ public interface OrderMapper {
      * @param goodsId
      */
     void updateGoodsStock(@Param("goodsId") Long goodsId, @Param("qty") Integer qty);
+
+    /**
+     * 주문 상태 업데이트
+     * @param orderNum
+     * @param goodsId
+     */
+    void updateOrderStatus(@Param("orderNum") Long orderNum, @Param("goodsId") Long goodsId, @Param("beforOrderStatus") String beforOrderStatus, @Param("afterOrderStatus") String afterOrderStatus);
 }
