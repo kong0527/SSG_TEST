@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -34,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     public CommonResponse<OrderCreateRespDTO> orderCreate(List<OrderCreateReqDTO> orderCreateReqDTO) {
 
         List<OrderCreateDetailDTO> orderCreateList = new ArrayList<>();
-        List<OrderGoodsInfoDTO> orderGooddsList = new ArrayList<>();
+        List<OrderGoodsInfoDTO> orderGoodsList = new ArrayList<>();
         LocalDateTime sysdate = LocalDateTime.now();
         Integer orderSeq = 1;
         Long totalPrice = 0L;
@@ -51,8 +52,8 @@ public class OrderServiceImpl implements OrderService {
             }
 
             // 상품 재고 체크
-            String stockYn = Optional.ofNullable(goodsInfo.getStockYn()).orElse("N");
-            if ("N".equals(stockYn)) {
+            Integer stockQty = Optional.ofNullable(goodsInfo.getStockQty()).orElse(0);
+            if (stockQty < dto.getOrderQty()) {
                 return CommonResponse.fail(ResponseFailEnum.STOCK_ZERO, null);  // 재고가 부족합니다.
             }
 
@@ -67,12 +68,12 @@ public class OrderServiceImpl implements OrderService {
                 orderCreateList.add(orderCreateDetail);
                 totalPrice += (goodsInfo.getSalePrice() - goodsInfo.getDiscountPrice());
             }
-            orderGooddsList.add(OrderGoodsInfoDTO.builder().goodsId(goodsInfo.getGoodsId()).goodsOrderPrice((goodsInfo.getSalePrice() - goodsInfo.getDiscountPrice()) * dto.getOrderQty()).build());
+            orderGoodsList.add(OrderGoodsInfoDTO.builder().goodsId(goodsInfo.getGoodsId()).goodsOrderPrice((goodsInfo.getSalePrice() - goodsInfo.getDiscountPrice()) * dto.getOrderQty()).build());
         }
 
         // 주문번호 채번 규칙: yyyyMMdd + 시퀀스
         String orderNumSeq = orderMapper.getOrderNumSeq();
-        Long orderNum = Long.valueOf(new SimpleDateFormat("yyyyMMdd").format(new Date()) + orderNumSeq);
+        Long orderNum = Long.valueOf(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + orderNumSeq);
 
         // 주문 생성
         orderCreateList.forEach(list -> {
@@ -82,12 +83,14 @@ public class OrderServiceImpl implements OrderService {
         // 결제 데이터 생성
         orderMapper.insertPayInfo(PayDtlDTO.builder().orderNum(orderNum).paySeq(1).payAmount(totalPrice).build());
 
-        // TODO: 재고 차감 하다 오류 발생하면 주문 생성 실패
-        // TODO: 재고 차감, 재고 체크 로직 생각 필요
+        // 재고 차감
+        orderCreateReqDTO.forEach(dto -> {
+            orderMapper.updateGoodsStock(dto.getGoodsId(), dto.getOrderQty(), "minus");
+        });
 
         OrderCreateRespDTO resp = OrderCreateRespDTO.builder()
                 .orderNum(orderNum)
-                .orderGoods(orderGooddsList)
+                .orderGoods(orderGoodsList)
                 .orderPrice(totalPrice)
                 .build();
 
@@ -105,6 +108,10 @@ public class OrderServiceImpl implements OrderService {
         // 주문 상품 정보 조회
         List<OrderListGoodsDTO> orderListGoods = orderMapper.getOrderGoods(orderNum);
 
+        if (ObjectUtils.isEmpty(orderListGoods)) {
+            return CommonResponse.fail(ResponseFailEnum.ORDER_INCORRECT, null); // 주문 정보가 존재하지 않습니다.
+        }
+
         for (OrderListGoodsDTO dto : orderListGoods) {
 
             // 주문 상태와 주문 상태 한글 명 매핑
@@ -114,10 +121,6 @@ public class OrderServiceImpl implements OrderService {
             if (!ObjectUtils.isEmpty(orderStatusEnum)) {
                 dto.setOrderStatusNm(orderStatusEnum.description());
             }
-        }
-
-        if (ObjectUtils.isEmpty(orderListGoods)) {
-            return CommonResponse.fail(ResponseFailEnum.ORDER_INCORRECT, null); // 주문 정보가 존재하지 않습니다.
         }
 
         OrderListRespDTO resp = OrderListRespDTO.builder()
@@ -164,7 +167,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.updatePayInfo(PayDtlDTO.builder().orderNum(orderNum).paySeq(1).build(), cancelAmount);
 
         // 재고 환원
-        orderMapper.updateGoodsStock(orderCancelReqDTO.getGoodsId(), cancelGoods.getOrderQty());
+        orderMapper.updateGoodsStock(orderCancelReqDTO.getGoodsId(), cancelGoods.getOrderQty(), "plus");
 
         OrderCancelRespDTO resp = OrderCancelRespDTO.builder()
                 .cancelGoodsId(orderCancelReqDTO.getGoodsId())

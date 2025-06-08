@@ -60,7 +60,7 @@ public interface OrderMapper {
      * 재고 환원
      * @param goodsId
      */
-    void updateGoodsStock(@Param("goodsId") Long goodsId, @Param("qty") Integer qty);
+    void updateGoodsStock(@Param("goodsId") Long goodsId, @Param("qty") Integer qty, @Param("stat") String stat);
 
     /**
      * 주문 상태 업데이트

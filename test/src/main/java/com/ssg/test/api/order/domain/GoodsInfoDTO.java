@@ -9,7 +9,7 @@ import lombok.Setter;
 public class GoodsInfoDTO {
 
     @Schema(description = "상품 재고")
-    private String stockYn;
+    private Integer stockQty;
 
     @Schema(description = "판매 가격")
     private Long salePrice;

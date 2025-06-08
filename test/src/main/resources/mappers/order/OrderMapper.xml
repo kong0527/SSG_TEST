@@ -6,7 +6,7 @@
     <!-- 재고 보유 여부 조회 -->
     <select id="getGoodsInfo" resultType="com.ssg.test.api.order.domain.GoodsInfoDTO">
         SELECT
-            DECODE(COUNT(1), 0, 'N', 'Y') AS STOCK_YN
+            STOCK_QTY
             , SALE_PRICE
             , DISCOUNT_PRICE
             , GOODS_NM
@@ -15,11 +15,7 @@
             GOODS_DTL
         WHERE
             GOODS_ID = #{goodsId}
-        GROUP BY
-            SALE_PRICE
-            , DISCOUNT_PRICE
-            , GOODS_NM
-            , GOODS_ID
+        FOR UPDATE
     </select>
 
     <!-- 주문 시퀀스 조회 -->
@@ -108,12 +104,19 @@
             ORDER_NUM = #{orderNum}
     </select>
 
-    <!-- 재고 환원 -->
+    <!-- 상품 재고 업데이트 -->
     <update id="updateGoodsStock">
         UPDATE
             GOODS_DTL
         SET
-            STOCK_QTY = STOCK_QTY + #{qty}
+        <choose>
+            <when test='"plus".equals(stat)'>
+                STOCK_QTY = STOCK_QTY + #{qty}
+            </when>
+            <when test='"minus".equals(stat)'>
+                STOCK_QTY = STOCK_QTY - #{qty}
+            </when>
+        </choose>
         WHERE
             GOODS_ID = #{goodsId}
     </update>
