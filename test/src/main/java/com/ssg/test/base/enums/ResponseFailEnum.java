@@ -10,6 +10,7 @@ public enum ResponseFailEnum {
     , ORDER_INCORRECT("7002", "주문 정보가 존재하지 않습니다.")
     , ORDER_ALREADY_CANCEL("7003", "이미 취소된 상품입니다.")
     , PARAM_ERROR("9001", "입력 파라미터 오류")
+    , FAIL_RUNNING_SQL("9998", "SQL 오류")
     , UNKNOWN_ERROR("9999", "정상적으로 처리되지 않았습니다.");
 
 
